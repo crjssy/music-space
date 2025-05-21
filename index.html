@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>音乐空间 - 首页</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="top-bar">
+      <img src="images/logo.png" alt="音乐空间 Logo" class="logo">
+      <div class="search-box">
+        <input type="text" placeholder="搜索歌曲、歌手...">
+        <button>搜索</button>
+      </div>
+      <div class="auth-links">
+        <a href="login.html">登录</a> |
+        <a href="register.html">注册</a>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="artists.html">歌手</a></li>
+        <li><a href="favorite.html">我的收藏</a></li>
+        <li><a href="player.html">播放页面</a></li>
+        <li><a href="about.html">关于我们</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="carousel">
+    <img src="images/banner.jpg" alt="轮播图">
+  </section>
+
+  <main>
+    <h2>热门歌曲推荐</h2>
+    <div class="song-list">
+      <div class="song-card">
+        <img src="images/song1.jpg" alt="封面">
+        <p>歌曲名称1</p>
+        <a href="player.html?song=song1.mp3">播放</a>
+      </div>
+      <div class="song-card">
+        <img src="images/song2.jpg" alt="封面">
+        <p>歌曲名称2</p>
+        <a href="player.html?song=song2.mp3">播放</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 音乐空间 Music Space 版权所有</p>
+  </footer>
+</body>
+</html>

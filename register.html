@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>音乐空间 - 注册</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .register-container {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .register-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .register-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .register-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .register-container button:hover {
+      background-color: #187bcd;
+    }
+    .register-container .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .register-container .link a {
+      color: #1e90ff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top-bar">
+      <img src="images/logo.png" alt="音乐空间 Logo" class="logo">
+      <div class="auth-links">
+        <a href="index.html">返回首页</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="register-container">
+      <h2>用户注册</h2>
+      <form id="registerForm">
+        <input type="text" id="username" placeholder="用户名" required>
+        <input type="email" id="email" placeholder="邮箱" required>
+        <input type="password" id="password" placeholder="密码" required>
+        <input type="password" id="confirmPassword" placeholder="确认密码" required>
+        <button type="submit">注册</button>
+        <div class="link">
+          已有账号？<a href="login.html">去登录</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 音乐空间 Music Space 版权所有</p>
+  </footer>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!username || !email || !password || !confirmPassword) {
+        alert('请填写所有字段');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+
+      // 模拟注册成功
+      alert('注册成功！请登录');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
