@@ -77,27 +77,41 @@
   </footer>
 
   <script>
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
 
-      if (!username || !email || !password || !confirmPassword) {
-        alert('请填写所有字段');
-        return;
-      }
+  if (!username || !email || !password || !confirmPassword) {
+    alert('请填写所有字段');
+    return;
+  }
 
-      if (password !== confirmPassword) {
-        alert('两次输入的密码不一致');
-        return;
-      }
+  if (password !== confirmPassword) {
+    alert('两次密码不一致');
+    return;
+  }
 
-      // 模拟注册成功
-      alert('注册成功！请登录');
-      window.location.href = 'login.html';
-    });
-  </script>
+  // 获取已有用户列表
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+
+  // 检查是否已存在同名用户
+  const existingUser = users.find(user => user.username === username);
+  if (existingUser) {
+    alert('用户名已存在，请更换');
+    return;
+  }
+
+  // 添加新用户
+  users.push({ username, email, password });
+  localStorage.setItem('users', JSON.stringify(users));
+
+  alert('注册成功！请登录');
+  window.location.href = 'login.html';
+});
+</script>
+
 </body>
 </html>

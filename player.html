@@ -1,32 +1,881 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>音乐空间 - 播放器</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 播放器页面样式 */
+    .player-container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .song-cover {
+      width: 200px;
+      height: 200px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      animation: pulse 3s infinite alternate;
+    }
+
+    .song-info {
+      margin-left: 30px;
+      flex: 1;
+    }
+
+    .song-title {
+      font-size: 32px;
+      margin: 0 0 10px;
+      color: #222;
+    }
+
+    .song-artist {
+      font-size: 18px;
+      color: #555;
+      margin: 0 0 20px;
+    }
+
+    .song-album {
+      font-size: 14px;
+      color: #777;
+      margin: 0 0 5px;
+    }
+
+    .song-release {
+      font-size: 14px;
+      color: #777;
+      margin: 0;
+    }
+
+    .player-controls {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .progress-container {
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #1e90ff;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 15px;
+    }
+
+    .controls-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .control-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: #f8f9fa;
+      color: #444;
+      transition: all 0.2s;
+    }
+
+    .control-btn:hover {
+      background: #e9ecef;
+    }
+
+    .control-btn.play-pause {
+      width: 50px;
+      height: 50px;
+      background: #1e90ff;
+      color: white;
+    }
+
+    .control-btn.play-pause:hover {
+      background: #0c70d4;
+      transform: scale(1.05);
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .volume-icon {
+      margin-right: 10px;
+      color: #666;
+    }
+
+    .volume-slider {
+      flex: 1;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .volume-level {
+      height: 100%;
+      background: #1e90ff;
+      border-radius: 2px;
+      width: 70%;
+    }
+
+    .song-lyrics {
+      height: 150px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-top: 20px;
+      white-space: pre-line;
+      scrollbar-width: thin;
+      scrollbar-color: #1e90ff transparent;
+    }
+
+    .song-lyrics::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .song-lyrics::-webkit-scrollbar-thumb {
+      background-color: #1e90ff;
+      border-radius: 3px;
+    }
+
+    .active-lyric {
+      color: #1e90ff;
+      font-weight: bold;
+    }
+
+    .player-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .playback-options button {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      margin-right: 15px;
+      font-size: 14px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      transition: all 0.2s;
+    }
+
+    .playback-options button:hover,
+    .playback-options button.active {
+      background: #e9ecef;
+      color: #1e90ff;
+    }
+
+    .share-options a {
+      color: #666;
+      margin-left: 15px;
+      transition: color 0.2s;
+    }
+
+    .share-options a:hover {
+      color: #1e90ff;
+    }
+
+    /* 旋转的唱片背景效果 */
+    .disc-background {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      background: url('images/disc.png') no-repeat center center;
+      background-size: contain;
+      opacity: 0.05;
+      z-index: -1;
+      animation: rotate 20s linear infinite;
+    }
+
+    /* 音频振动效果 */
+    .audio-waves {
+      display: flex;
+      gap: 3px;
+      height: 30px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .wave-bar {
+      width: 4px;
+      background: #1e90ff;
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    .wave-bar:nth-child(1) {
+      height: 60%;
+      animation-delay: 0.0s;
+    }
+
+    .wave-bar:nth-child(2) {
+      height: 30%;
+      animation-delay: 0.2s;
+    }
+
+    .wave-bar:nth-child(3) {
+      height: 75%;
+      animation-delay: 0.4s;
+    }
+
+    .wave-bar:nth-child(4) {
+      height: 45%;
+      animation-delay: 0.6s;
+    }
+
+    .wave-bar:nth-child(5) {
+      height: 85%;
+      animation-delay: 0.8s;
+    }
+
+    .wave-bar:nth-child(6) {
+      height: 40%;
+      animation-delay: 1.0s;
+    }
+
+    .wave-bar:nth-child(7) {
+      height: 65%;
+      animation-delay: 1.2s;
+    }
+
+    /* 相关推荐 */
+    .related-songs {
+      margin-top: 30px;
+    }
+
+    .related-songs h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .related-list {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #1e90ff transparent;
+    }
+
+    .related-list::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .related-list::-webkit-scrollbar-thumb {
+      background-color: #1e90ff;
+      border-radius: 3px;
+    }
+
+    .related-item {
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .related-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      transition: transform 0.2s;
+    }
+
+    .related-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .related-item p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .player-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .song-info {
+        margin-left: 0;
+        margin-top: 20px;
+      }
+
+      .controls-buttons {
+        gap: 10px;
+      }
+    }
+
+    /* 动画效果 */
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes wave {
+
+      0%,
+      100% {
+        transform: scaleY(0.3);
+      }
+
+      50% {
+        transform: scaleY(1);
+      }
+    }
+
+    .paused .wave-bar {
+      animation-play-state: paused;
+    }
+
+    .playing .song-cover {
+      animation: rotate 20s linear infinite, pulse 3s infinite alternate;
+    }
+  </style>
 </head>
+
 <body>
   <header>
     <div class="top-bar">
       <img src="images/logo.png" alt="音乐空间 Logo" class="logo">
       <div class="auth-links">
-        <a href="index.html">返回首页</a>
+        <a href="login.html">登录</a> |
+        <a href="register.html">注册</a>
       </div>
     </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="artists.html">歌手</a></li>
+        <li><a href="playlist.html">歌曲列表</a></li>
+        <li><a href="player.html">播放页面</a></li>
+        <li><a href="about.html">关于我们</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main class="player-container">
-    <h2>正在播放：<span id="song-name">未知</span></h2>
-    <audio id="audio" controls>
-      <source id="audio-source" src="music/song1.mp3" type="audio/mpeg">
-      您的浏览器不支持 audio 标签。
-    </audio>
+    <div class="disc-background"></div>
+
+    <div class="player-header">
+      <img src="images/song-cover.jpg" alt="歌曲封面" class="song-cover" id="song-cover">
+
+      <div class="song-info">
+        <h1 class="song-title" id="song-title">歌曲名称</h1>
+        <p class="song-artist" id="song-artist">歌手名称</p>
+        <p class="song-album" id="song-album">所属专辑：专辑名称</p>
+        <p class="song-release" id="song-release">发行日期：2023-05-15</p>
+
+        <div class="audio-waves" id="audio-waves">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="time-display">
+        <span id="current-time">00:00</span>
+        <span id="duration">00:00</span>
+      </div>
+
+      <div class="controls-buttons">
+        <button class="control-btn" id="prev-btn" title="上一首">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+            <line x1="5" y1="19" x2="5" y2="5"></line>
+          </svg>
+        </button>
+
+        <button class="control-btn" id="backward-btn" title="后退 10 秒">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 4v6h6"></path>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            <text x="12" y="16" text-anchor="middle" font-size="6" fill="currentColor">10</text>
+          </svg>
+        </button>
+
+        <button class="control-btn play-pause" id="play-pause-btn" title="播放/暂停">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            id="play-icon">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            id="pause-icon" style="display: none;">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+
+        <button class="control-btn" id="forward-btn" title="前进 10 秒">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"></path>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            <text x="12" y="16" text-anchor="middle" font-size="6" fill="currentColor">10</text>
+          </svg>
+        </button>
+
+        <button class="control-btn" id="next-btn" title="下一首">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="volume-container">
+        <div class="volume-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </div>
+        <div class="volume-slider" id="volume-slider">
+          <div class="volume-level" id="volume-level"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="song-lyrics" id="lyrics">
+      <!-- 歌词会通过JS动态添加 -->
+      正在加载歌词...
+    </div>
+
+    <div class="player-footer">
+      <div class="playback-options">
+        <button id="repeat-btn">循环播放</button>
+        <button id="shuffle-btn">随机播放</button>
+        <button id="speed-btn">1.0x</button>
+      </div>
+
+      <div class="share-options">
+        <a href="#" title="收藏">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </a>
+        <a href="#" title="分享">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+        </a>
+        <a href="#" title="下载">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <audio id="audio" src="" preload="auto" style="display: none;"></audio>
   </main>
 
   <footer>
     <p>© 2025 音乐空间 Music Space 版权所有</p>
   </footer>
 
-  <script src="js/player.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const audio = document.getElementById('audio');
+      const playPauseBtn = document.getElementById('play-pause-btn');
+      const playIcon = document.getElementById('play-icon');
+      const pauseIcon = document.getElementById('pause-icon');
+      const progressBar = document.getElementById('progress-bar');
+      const progressContainer = document.getElementById('progress-container');
+      const currentTimeEl = document.getElementById('current-time');
+      const durationEl = document.getElementById('duration');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const forwardBtn = document.getElementById('forward-btn');
+      const backwardBtn = document.getElementById('backward-btn');
+      const volumeSlider = document.getElementById('volume-slider');
+      const volumeLevel = document.getElementById('volume-level');
+      const repeatBtn = document.getElementById('repeat-btn');
+      const shuffleBtn = document.getElementById('shuffle-btn');
+      const speedBtn = document.getElementById('speed-btn');
+      const audioWaves = document.getElementById('audio-waves');
+      const songCover = document.getElementById('song-cover');
+      const songTitle = document.getElementById('song-title');
+      const songArtist = document.getElementById('song-artist');
+      const songAlbum = document.getElementById('song-album');
+      const songRelease = document.getElementById('song-release');
+      const lyricsContainer = document.getElementById('lyrics');
+
+      // 获取URL参数
+      function getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          song: params.get('song'),
+          title: params.get('title'),
+          artist: params.get('artist'),
+          album: params.get('album'),
+          cover: params.get('cover')
+        };
+      }
+
+      // 歌曲信息库（备用数据）
+      const songsLibrary = {
+        'daoxiang.mp3': {
+          title: '稻香',
+          artist: '周杰伦',
+          cover: 'images/song1.jpg',
+          album: '魔杰座',
+          release: '2008-10-15',
+          lyrics: `[00:00.00] 稻香 - 周杰伦
+[00:05.00] 词：周杰伦
+[00:10.00] 曲：周杰伦
+[00:15.00] 制作人：周杰伦
+[00:27.90] 对这个世界如果你有太多的抱怨
+[00:31.00] 跌倒了就不敢继续往前走
+[00:34.23] 为什么人要这么的脆弱 堕落
+[00:41.35] 请你打开电视看看
+[00:43.75] 多少人为生命在努力勇敢的走下去
+[00:48.30] 我们是不是该知足
+[00:51.35] 珍惜一切 就算没有拥有
+[00:55.74] 还记得你说家是唯一的城堡
+[01:00.43] 随着稻香河流继续奔跑
+[01:04.93] 微微笑 小时候的梦我知道
+[01:13.66] 不要哭让萤火虫带着你逃跑
+[01:18.43] 乡间的歌谣永远的依靠
+[01:22.92] 回家吧 回到最初的美好`
+        },
+        'paomo.mp3': {
+          title: '光年之外',
+          artist: '邓紫棋',
+          cover: 'images/song2.jpg',
+          album: '新的心跳',
+          release: '2016-12-30',
+          lyrics: `[00:00.00] 光年之外 - 邓紫棋
+[00:05.00] 词：邓紫棋/刘卓辉
+[00:10.00] 曲：邓紫棋
+[00:15.00] 编曲：Lupo Groinig
+[00:26.23] 感受停在我发端的指尖
+[00:33.63] 如何瞬间 冻结时间
+[00:40.63] 记住望着我坚定的双眼
+[00:47.69] 也许已经 没有明天
+[00:54.35] 面对浩瀚的星海
+[00:58.06] 我们微小得像尘埃
+[01:01.55] 漂浮在 黑暗中 不知去向
+[01:08.40] 我没有羽翼 也不怕黑暗
+[01:15.42] 朝着星河 让我飞翔
+[01:19.18] 就算遇见灿烂 我眼里只有你的星光`
+        },
+        'jiangnan.mp3': {
+          title: '江南',
+          artist: '林俊杰',
+          cover: 'images/song3.jpg',
+          album: '第二天堂',
+          release: '2004-06-04',
+          lyrics: `[00:00.00] 江南 - 林俊杰
+[00:05.00] 词：李瑞洵
+[00:10.00] 曲：林俊杰
+[00:15.00] 编曲：蔡政勋/陈建玮
+[00:26.89] 风到这里就是黏
+[00:30.39] 黏住过客的思念
+[00:33.68] 雨到了这里缠成线
+[00:37.09] 缠着我们留恋人世间
+[00:41.07] 你在身边就是缘
+[00:45.12] 缘分写在三生石上面
+[00:48.91] 爱有万分之一甜
+[00:52.12] 宁愿我就葬在这一点
+[00:55.57] 圈圈圆圆圈圈
+[00:58.87] 天天年年天天 的我
+[01:03.12] 深深看你的脸
+[01:06.32] 生气的温柔`
+        }
+      };
+
+      // 统一的初始化播放器函数
+      function initPlayer() {
+        const urlParams = getUrlParams();
+        let songInfo = null;
+
+        console.log('URL参数:', urlParams);
+
+        // 优先使用URL传递的参数
+        if (urlParams.song && urlParams.title) {
+          console.log('使用URL参数');
+          songInfo = {
+            title: urlParams.title,
+            artist: urlParams.artist || '未知艺术家',
+            album: urlParams.album || '未知专辑',
+            cover: urlParams.cover || 'images/default-cover.jpg',
+            release: '未知',
+            lyrics: '暂无歌词'
+          };
+
+          // 设置音频源
+          audio.src = 'music/' + urlParams.song;
+
+        } else if (urlParams.song && songsLibrary[urlParams.song]) {
+          // 如果URL只有歌曲文件名，使用库中的信息
+          console.log('使用库中信息');
+          songInfo = songsLibrary[urlParams.song];
+          audio.src = 'music/' + urlParams.song;
+
+        } else {
+          // 没有指定歌曲
+          console.log('没有指定歌曲');
+          songTitle.textContent = '未选择歌曲';
+          songArtist.textContent = '请从首页选择要播放的歌曲';
+          songAlbum.textContent = '所属专辑：-';
+          songRelease.textContent = '发行日期：-';
+          lyricsContainer.textContent = '暂无歌词';
+          return;
+        }
+
+        // 更新界面信息
+        if (songInfo) {
+          songTitle.textContent = songInfo.title;
+          songArtist.textContent = songInfo.artist;
+          songAlbum.textContent = '所属专辑：' + songInfo.album;
+          songRelease.textContent = '发行日期：' + songInfo.release;
+
+          console.log('设置封面:', songInfo.cover);
+          songCover.src = songInfo.cover;
+          songCover.alt = songInfo.title + ' 专辑封面';
+
+          // 设置歌词
+          if (songInfo.lyrics) {
+            lyricsContainer.textContent = songInfo.lyrics;
+          } else {
+            lyricsContainer.textContent = '暂无歌词';
+          }
+
+          // 设置页面标题
+          document.title = songInfo.title + ' - ' + songInfo.artist + ' | 音乐空间';
+        }
+
+        // 设置初始音量
+        audio.volume = 0.7;
+        volumeLevel.style.width = (audio.volume * 100) + '%';
+        // 在initPlayer函数的最后，audio.src设置完成后添加：
+        if (urlParams.song) {
+          // 监听音频加载完成
+          audio.addEventListener('canplaythrough', function () {
+            // 尝试自动播放
+            audio.play().catch(error => {
+              console.log('自动播放被阻止，需要用户点击播放按钮');
+            });
+          }, { once: true });
+        }
+      }
+
+      // 播放/暂停切换
+      function togglePlay() {
+        if (audio.paused) {
+          audio.play();
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          songCover.classList.add('playing');
+          audioWaves.classList.remove('paused');
+        } else {
+          audio.pause();
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          songCover.classList.remove('playing');
+          audioWaves.classList.add('paused');
+        }
+      }
+
+      // 更新进度条
+      function updateProgress() {
+        const { duration, currentTime } = audio;
+        const progressPercent = (currentTime / duration) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+
+        // 更新时间显示
+        const currentMinutes = Math.floor(currentTime / 60);
+        const currentSeconds = Math.floor(currentTime % 60);
+        currentTimeEl.textContent = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
+
+        if (!isNaN(duration)) {
+          const durationMinutes = Math.floor(duration / 60);
+          const durationSeconds = Math.floor(duration % 60);
+          durationEl.textContent = `${durationMinutes.toString().padStart(2, '0')}:${durationSeconds.toString().padStart(2, '0')}`;
+        }
+      }
+
+      // 设置进度条点击
+      function setProgress(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        audio.currentTime = (clickX / width) * duration;
+      }
+
+      // 快进/后退
+      function skipTime(seconds) {
+        audio.currentTime += seconds;
+      }
+
+      // 设置音量
+      function setVolume(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const volume = clickX / width;
+
+        // 限制音量在0-1之间
+        audio.volume = Math.min(Math.max(volume, 0), 1);
+        volumeLevel.style.width = (audio.volume * 100) + '%';
+      }
+
+      // 切换播放速度
+      let speedIndex = 0;
+      const speeds = [1.0, 1.25, 1.5, 0.75, 0.5];
+
+      function toggleSpeed() {
+        speedIndex = (speedIndex + 1) % speeds.length;
+        const newSpeed = speeds[speedIndex];
+        audio.playbackRate = newSpeed;
+        speedBtn.textContent = newSpeed + 'x';
+      }
+
+      // 切换循环模式
+      let isRepeat = false;
+
+      function toggleRepeat() {
+        isRepeat = !isRepeat;
+        audio.loop = isRepeat;
+
+        if (isRepeat) {
+          repeatBtn.classList.add('active');
+        } else {
+          repeatBtn.classList.remove('active');
+        }
+      }
+
+      // 切换随机播放
+      let isShuffle = false;
+
+      function toggleShuffle() {
+        isShuffle = !isShuffle;
+
+        if (isShuffle) {
+          shuffleBtn.classList.add('active');
+        } else {
+          shuffleBtn.classList.remove('active');
+        }
+      }
+
+      // 下一首/上一首
+      function nextSong() {
+        alert('下一首功能需要歌曲列表支持');
+      }
+
+      function prevSong() {
+        alert('上一首功能需要歌曲列表支持');
+      }
+
+      // 事件监听器
+      playPauseBtn.addEventListener('click', togglePlay);
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', function () {
+        if (!isRepeat) {
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          songCover.classList.remove('playing');
+          audioWaves.classList.add('paused');
+        }
+      });
+      progressContainer.addEventListener('click', setProgress);
+      volumeSlider.addEventListener('click', setVolume);
+      forwardBtn.addEventListener('click', () => skipTime(10));
+      backwardBtn.addEventListener('click', () => skipTime(-10));
+      nextBtn.addEventListener('click', nextSong);
+      prevBtn.addEventListener('click', prevSong);
+      speedBtn.addEventListener('click', toggleSpeed);
+      repeatBtn.addEventListener('click', toggleRepeat);
+      shuffleBtn.addEventListener('click', toggleShuffle);
+
+      // 初始化播放器
+      initPlayer();
+    });
+  </script>
 </body>
+
 </html>

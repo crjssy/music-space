@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <title>音乐空间 - 首页</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
+
 <body>
   <header>
     <div class="top-bar">
@@ -22,7 +25,7 @@
       <ul>
         <li><a href="index.html">首页</a></li>
         <li><a href="artists.html">歌手</a></li>
-        <li><a href="favorite.html">我的收藏</a></li>
+        <li><a href="playlist.html">歌曲列表</a></li>
         <li><a href="player.html">播放页面</a></li>
         <li><a href="about.html">关于我们</a></li>
       </ul>
@@ -30,27 +33,83 @@
   </header>
 
   <section class="carousel">
-    <img src="images/banner.jpg" alt="轮播图">
+    <div class="carousel-wrapper">
+      <img id="carousel-img" src="images/banner1.png" alt="音乐空间轮播图">
+      <!-- 添加左右导航按钮 -->
+      <button class="carousel-btn prev-btn">&lt;</button>
+      <button class="carousel-btn next-btn">&gt;</button>
+    </div>
+    <div class="dots" id="carousel-dots">
+      <span class="dot active" data-index="0"></span>
+      <span class="dot" data-index="1"></span>
+      <span class="dot" data-index="2"></span>
+    </div>
   </section>
 
+
   <main>
-    <h2>热门歌曲推荐</h2>
+    <h2 class="section-title">热门歌曲推荐</h2>
+
     <div class="song-list">
       <div class="song-card">
-        <img src="images/song1.jpg" alt="封面">
-        <p>歌曲名称1</p>
-        <a href="player.html?song=song1.mp3">播放</a>
+        <div class="song-cover">
+          <img src="images/song1.jpg" alt="周杰伦 - 稻香">
+          <div class="play-overlay">
+            <a href="player.html?song=daoxiang.mp3" class="play-btn">播放</a>
+          </div>
+        </div>
+        <div class="song-info">
+          <h3 class="song-title">稻香</h3>
+          <p class="song-artist">周杰伦</p>
+          <div class="song-stats">
+            <span class="play-count">播放: 1.2万</span>
+            <span class="like-count">❤ 8.5k</span>
+          </div>
+        </div>
       </div>
+
       <div class="song-card">
-        <img src="images/song2.jpg" alt="封面">
-        <p>歌曲名称2</p>
-        <a href="player.html?song=song2.mp3">播放</a>
+        <div class="song-cover">
+          <img src="images/song2.jpg" alt="邓紫棋 - 光年之外">
+          <div class="play-overlay">
+            <a href="player.html?song=lightyears.mp3" class="play-btn">播放</a>
+          </div>
+        </div>
+        <div class="song-info">
+          <h3 class="song-title">光年之外</h3>
+          <p class="song-artist">邓紫棋</p>
+          <div class="song-stats">
+            <span class="play-count">播放: 1.2万</span>
+            <span class="like-count">❤ 9.3k</span>
+          </div>
+        </div>
       </div>
+
+      <!-- 可以添加更多歌曲卡片 -->
     </div>
   </main>
 
   <footer>
     <p>© 2025 音乐空间 Music Space 版权所有</p>
   </footer>
+  <script>
+    window.onload = function () {
+      const user = JSON.parse(localStorage.getItem('loggedInUser'));
+      const authLinks = document.querySelector('.auth-links');
+
+      if (user) {
+        authLinks.innerHTML = `
+      欢迎，${user.username} | <a href="#" id="logoutBtn">退出登录</a>
+    `;
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+          localStorage.removeItem('loggedInUser');
+          location.reload();
+        });
+      }
+    };
+  </script>
+  <script src="js/carousel.js"></script>
 </body>
+
 </html>

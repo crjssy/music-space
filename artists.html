@@ -49,6 +49,7 @@
       text-decoration: none;
       color: #1e90ff;
       font-size: 14px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -64,7 +65,7 @@
       <ul>
         <li><a href="index.html">首页</a></li>
         <li><a href="artists.html">歌手</a></li>
-        <li><a href="favorite.html">我的收藏</a></li>
+        <li><a href="playlist.html">歌曲列表</a></li>
         <li><a href="player.html">播放页面</a></li>
         <li><a href="about.html">关于我们</a></li>
       </ul>
@@ -75,32 +76,46 @@
     <h2 style="text-align: center; margin: 20px 0;">热门歌手</h2>
     <div class="artist-container">
       <div class="artist-card">
-        <img src="images/artist1.jpg" alt="歌手1">
+        <img src="images/artist1.png" alt="周杰伦">
         <div class="artist-name">周杰伦</div>
         <div class="song-preview">代表作：稻香</div>
-        <a href="player.html?song=daoxiang.mp3">播放代表作</a>
+        <a onclick="playSong('daoxiang.mp3', '稻香', '周杰伦', '魔杰座 • 2008', 'images/song1.jpg')">播放代表作</a>
       </div>
 
       <div class="artist-card">
-        <img src="images/artist2.jpg" alt="歌手2">
+        <img src="images/artist3.png" alt="邓紫棋">
         <div class="artist-name">邓紫棋</div>
         <div class="song-preview">代表作：光年之外</div>
-        <a href="player.html?song=lightyears.mp3">播放代表作</a>
+        <a onclick="playSong('gnzw.mp3', '光年之外', '邓紫棋', '新的心跳 • 2016', 'images/song2.jpg')">播放代表作</a>
       </div>
 
       <div class="artist-card">
-        <img src="images/artist3.jpg" alt="歌手3">
+        <img src="images/artist2.png" alt="林俊杰">
         <div class="artist-name">林俊杰</div>
         <div class="song-preview">代表作：江南</div>
-        <a href="player.html?song=jiangnan.mp3">播放代表作</a>
+        <a onclick="playSong('jiangnan.mp3', '江南', '林俊杰', '第二天堂 • 2004', 'images/song3.jpg')">播放代表作</a>
       </div>
 
-      <!-- 你可以继续添加更多歌手 -->
+      <!-- 更多歌手可继续添加 -->
     </div>
   </main>
 
   <footer>
     <p>© 2025 音乐空间 Music Space 版权所有</p>
   </footer>
+
+  <script>
+    // 播放歌曲跳转
+    function playSong(filename, title, artist, album, cover) {
+      const params = new URLSearchParams({
+        song: filename,
+        title: title,
+        artist: artist,
+        album: album,
+        cover: cover
+      });
+      window.location.href = `player.html?${params.toString()}`;
+    }
+  </script>
 </body>
 </html>

@@ -1,59 +1,374 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f0f2f5;
+  font-family: 'Segoe UI', '微软雅黑', sans-serif;
+  background: linear-gradient(to bottom, #fefefe, #f0f4ff);
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+}
+
+header {
+  background-color: #1f1f1f;
+  color: white;
+  padding: 10px 30px;
+}
+
+.top-bar {
+  background: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 50px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  background: #444;
+  padding: 10px;
+  margin: 0;
+}
+
+nav ul li {
+  margin-right: 20px;
+}
+
+nav ul li a {
+  display: block;
+  padding: 14px 20px;
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+nav ul li a:hover {
+  background-color: #666;
+  padding: 5px;
+}
+
+.search-box input {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #1e90ff;
+  box-shadow: 0 0 5px #1e90ff88;
+}
+
+.auth-links a {
+  color: white;
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.carousel img {
+  width: 100%;
+  height: auto;
+}
+
+.song-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.song-card {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  width: 160px;
+  text-align: center;
+  box-shadow: 0 0 10px #ccc;
+  transition: transform 0.2s;
+}
+
+.song-card:hover {
+  transform: scale(1.03);
+}
+
+footer {
+  text-align: center;
+  background: #333;
+  color: white;
+  padding: 10px;
+  margin-top: 30px;
+}
+
+/* player */
+.player-container {
+  text-align: center;
+  padding: 40px;
+  background: #fff;
+  box-shadow: 0 0 20px #0001;
+  margin: 40px auto;
+  width: 80%;
+  border-radius: 10px;
+}
+
+.disc-box {
+  margin: 20px auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 8px solid #ccc;
+}
+
+.disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: spin 5s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  .top-bar {
-    background: #333;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+  100% {
+    transform: rotate(360deg);
   }
-  .logo {
-    height: 40px;
-  }
-  nav ul {
-    display: flex;
-    list-style: none;
-    background: #444;
-    padding: 10px;
-    margin: 0;
-  }
-  nav ul li {
-    margin-right: 20px;
-  }
-  nav ul li a {
-    color: white;
-    text-decoration: none;
-  }
-  nav ul li a:hover {
-    background-color: #666;
-    padding: 5px;
-  }
-  .carousel img {
-    width: 100%;
-    height: auto;
-  }
-  .song-list {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-  }
-  .song-card {
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    width: 150px;
-    text-align: center;
-  }
-  footer {
-    text-align: center;
-    background: #333;
-    color: white;
-    padding: 10px;
-    margin-top: 30px;
-  }
-  
+}
+
+.disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: spin 5s linear infinite;
+  animation-play-state: paused;
+  /* 默认暂停 */
+  transition: transform 0.3s ease;
+}
+/* 轮播图 - 优化版 */
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 400px; /* 增加高度以获得更好的视觉效果 */
+  overflow: hidden;
+  background-color: #000;
+  margin-bottom: 30px;
+}
+
+.carousel-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保持图片比例覆盖显示区域 */
+  object-position: center; /* 图片居中显示 */
+  transition: opacity 0.5s ease-in-out;
+  display: block; /* 消除图片底部间隙 */
+  image-rendering: -webkit-optimize-contrast; /* 提高图片在Chrome上的清晰度 */
+  image-rendering: crisp-edges; /* 提高图片边缘清晰度 */
+}
+
+/* 添加图片过渡效果 */
+.carousel img.fade {
+  opacity: 0;
+}
+
+/* 为轮播图添加阴影和边框效果 */
+.carousel-wrapper {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dots {
+  position: absolute;
+  bottom: 20px; /* 增加与底部的距离 */
+  width: 100%;
+  text-align: center;
+  z-index: 10; /* 确保点在图片上方 */
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 6px; /* 增加点之间的间距 */
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent; /* 添加边框，提高视觉效果 */
+}
+
+.dot:hover {
+  transform: scale(1.2); /* 悬停时放大效果 */
+}
+
+.dot.active {
+  background-color: white;
+  transform: scale(1.2); /* 活动点略大 */
+  border-color: rgba(255, 255, 255, 0.2); /* 添加边框效果 */
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5); /* 添加发光效果 */
+}
+
+/* 添加左右切换按钮 */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s, background-color 0.3s;
+}
+
+.carousel:hover .carousel-btn {
+  opacity: 1;
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
+.carousel-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+/* 热门歌曲 */
+/* 热门歌曲推荐区域样式 */
+.section-title {
+  text-align: center;
+  margin: 30px 0;
+  font-size: 24px;
+  color: #333;
+  position: relative;
+}
+
+.section-title:after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: #1e90ff;
+  margin: 10px auto;
+}
+
+.song-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  padding: 0 20px 40px;
+}
+
+.song-card {
+  width: 200px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.song-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.song-cover {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.song-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.song-card:hover .song-cover img {
+  transform: scale(1.1);
+}
+
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.song-card:hover .play-overlay {
+  opacity: 1;
+}
+
+.play-btn {
+  background: #1e90ff;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.play-btn:hover {
+  background: #0c70d4;
+}
+
+.song-info {
+  padding: 15px;
+}
+
+.song-title {
+  margin: 0 0 5px;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  color: #666;
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.song-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+}

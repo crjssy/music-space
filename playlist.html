@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <title>音乐空间 - 播放列表</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .song-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .song-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
+    }
+
+    .song-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .song-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .song-card h4 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .song-card .artist {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .song-card .album {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    .song-card button {
+      background: #1e90ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 14px;
+    }
+
+    .song-card button:hover {
+      background: #0c70d4;
+    }
+
+    .playlist-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .playlist-header h2 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .playlist-stats {
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="top-bar">
+      <img src="images/logo.png" alt="音乐空间 Logo" class="logo">
+      <div class="search-box">
+        <input type="text" placeholder="搜索歌曲、歌手...">
+        <button>搜索</button>
+      </div>
+      <div class="auth-links">
+        <a href="login.html">登录</a> |
+        <a href="register.html">注册</a>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="artists.html">歌手</a></li>
+        <li><a href="playlist.html">歌曲列表</a></li>
+        <li><a href="player.html">播放页面</a></li>
+        <li><a href="about.html">关于我们</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="player-container">
+    <div class="playlist-header">
+      <h2>精选播放列表</h2>
+      <div class="playlist-stats">共 3 首歌曲 • 播放时长约 12 分钟</div>
+    </div>
+
+    <div class="song-list">
+      <div class="song-card">
+        <img src="images/song1.jpg" alt="稻香专辑封面">
+        <h4>稻香</h4>
+        <div class="artist">周杰伦</div>
+        <div class="album">魔杰座 • 2008</div>
+        <button onclick="playSong('daoxiang.mp3', '稻香', '周杰伦', '魔杰座 • 2008', 'images/song1.jpg')">播放</button>
+      </div>
+
+      <div class="song-card">
+        <img src="images/song2.jpg" alt="光年之外专辑封面">
+        <h4>光年之外</h4>
+        <div class="artist">邓紫棋</div>
+        <div class="album">新的心跳 • 2016</div>
+        <button onclick="playSong('gnzw.mp3', '光年之外', '邓紫棋', '新的心跳 • 2016', 'images/song2.jpg')">播放</button>
+      </div>
+
+      <div class="song-card">
+        <img src="images/song3.jpg" alt="江南专辑封面">
+        <h4>江南</h4>
+        <div class="artist">林俊杰</div>
+        <div class="album">第二天堂 • 2004</div>
+        <button onclick="playSong('jiangnan.mp3', '江南', '林俊杰', '第二天堂 • 2004', 'images/song3.jpg')">播放</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button onclick="playAll()"
+        style="background: #28a745; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px;">
+        播放全部
+      </button>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 音乐空间 Music Space 版权所有</p>
+  </footer>
+
+  <script>
+    // 播放单首歌曲函数 - 跳转到播放器页面
+    function playSong(filename, title, artist, album, cover) {
+      const params = new URLSearchParams({
+        song: filename,
+        title: title,
+        artist: artist,
+        album: album,
+        cover: cover
+      });
+      window.location.href = `player.html?${params.toString()}`;
+    }
+
+    // 播放全部歌曲
+    function playAll() {
+      // 从第一首歌开始播放
+      playSong('daoxiang.mp3', '稻香', '周杰伦', '魔杰座 • 2008', 'images/song1.jpg');
+    }
+
+    // 搜索功能
+    document.querySelector('.search-box input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        searchSongs();
+      }
+    });
+
+    document.querySelector('.search-box button').addEventListener('click', searchSongs);
+
+    function searchSongs() {
+      const searchTerm = document.querySelector('.search-box input').value.toLowerCase();
+      const songCards = document.querySelectorAll('.song-card');
+
+      songCards.forEach(card => {
+        const title = card.querySelector('h4').textContent.toLowerCase();
+        const artist = card.querySelector('.artist').textContent.toLowerCase();
+
+        if (title.includes(searchTerm) || artist.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = searchTerm === '' ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
